@@ -14,6 +14,10 @@ const userSchema = new mongoose.Schema(
       required: [true, "Please enter your email address"],
       unique: true,
     },
+    status: {
+      type: Boolean,
+      default: true,
+    },
     password: {
       type: String,
       required: [true, "Please enter your Password"],
@@ -28,9 +32,9 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      default: "user",
+      default: "User",
       enum: {
-        values: ["user", "admin"],
+        values: ["User", "Admin"],
         message: "Please enter a valid role ",
       },
     },
@@ -51,8 +55,12 @@ userSchema.pre("save", async function () {
 //generate jsonwebtoken
 userSchema.methods.generateToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.expiresIn,
+    expiresIn: process.env.EXPIRES_IN,
   });
+};
+
+userSchema.methods.comparePassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 
 const User = mongoose.model("User", userSchema);

@@ -18,13 +18,14 @@ exports.isAuthenticatedUser = async (req, res, next) => {
   next();
 };
 
-exports.authorizeRoles = (...roles) =>{
-  return(req,res,next)=>{
-    if(!roles.includes(req.user.role)){
+exports.authorizeRoles = (...roles) => {
+  return (req, res, next) => {
+    //if roles does not include req.user roles ...roles is an array of as much roles you want
+    if (!roles.includes(req.user.role)) {
       return res.status(403).json({
-        message:"You are Not Authorized to access this resource Please"
-      })
+        message: "You are Not Authorized to access this resource Please",
+      });
     }
     next();
-  }
-}
+  };
+};

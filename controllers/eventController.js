@@ -29,9 +29,9 @@ exports.createEvent = async (req, res, next) => {
     !description ||
     !date ||
     !location ||
-    !status ||
     !price ||
-    !capacity
+    !capacity ||
+    !category
   ) {
     return res.status(400).json({
       message: "Please Fill in All Details For this event please",
@@ -47,6 +47,7 @@ exports.createEvent = async (req, res, next) => {
     price,
     capacity,
     imageUrl,
+    category,
   };
 
   const event = await Event.create(newEvent);

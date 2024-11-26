@@ -6,13 +6,28 @@ const {
   deleteEvents,
   fetchEvent,
 } = require("../controllers/eventController");
-const { isAuthenticatedUser } = require("../middlewares/auth");
+const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 const router = express.Router();
 
 router.get("/", getEvents);
-router.post("/create", isAuthenticatedUser, createEvent);
-router.put("/update", isAuthenticatedUser, updateEvents);
-router.delete("/delete", isAuthenticatedUser, deleteEvents);
-router.get("/:id", isAuthenticatedUser, fetchEvent);
+router.post(
+  "/create",
+  isAuthenticatedUser,
+  authorizeRoles("Admin"),
+  createEvent
+);
+router.put(
+  "/update",
+  isAuthenticatedUser,
+  authorizeRoles("Admin"),
+  updateEvents
+);
+router.delete(
+  "/delete",
+  isAuthenticatedUser,
+  authorizeRoles("Admin"),
+  deleteEvents
+);
+router.get("/:id", fetchEvent);
 
 module.exports = router;
