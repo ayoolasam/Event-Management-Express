@@ -16,7 +16,7 @@ databaseConnection();
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000","https://event-management-nuxt.vercel.app"],
     credentials: true,
   })
 );
