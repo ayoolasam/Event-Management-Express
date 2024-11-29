@@ -23,7 +23,7 @@ router.put(
   updateEvents
 );
 router.delete(
-  "/delete",
+  "/delete/:id",
   isAuthenticatedUser,
   authorizeRoles("Admin"),
   deleteEvents

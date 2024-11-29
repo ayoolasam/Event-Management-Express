@@ -16,13 +16,16 @@ databaseConnection();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000","https://event-management-nuxt.vercel.app"],
+    origin: [
+      "http://localhost:3000",
+      "https://event-management-nuxt.vercel.app",
+    ],
     credentials: true,
   })
 );
 
-app.use("/api/v1/users",user);
-app.use("/api/v1/events",events);
+app.use("/api/v1/users", user);
+app.use("/api/v1/events", events);
 app.use("/api/v1/upload", uploadRoutes);
 
 const PORT = process.env.PORT;

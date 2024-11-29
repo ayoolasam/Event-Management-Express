@@ -15,8 +15,16 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
     status: {
-      type: Boolean,
-      default: true,
+      type: String,
+      enum: {
+        values: ["active", "inactive"],
+       
+      },
+      default: "active",
+    },
+    uniqueID:{
+      type:String,
+      required:true,
     },
     password: {
       type: String,

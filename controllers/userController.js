@@ -2,6 +2,8 @@ const User = require("../models/user");
 const sendToken = require("../utils/sendToken");
 const { createEmailTemplate } = require("../utils/emailTemplate");
 const sendEmail = require("../utils/sendEmail");
+const generateRandomString = require("../utils/uniqueId");
+const { generateKey } = require("crypto");
 
 //get users
 exports.getUsers = async (req, res, next) => {
@@ -53,11 +55,15 @@ exports.register = async (req, res, next) => {
     });
   }
 
+  const string = generateRandomString();
+  console.log(string);
+
   const user = await User.create({
     name,
     email,
     password,
     username,
+    uniqueID: string,
   });
 
   const message = createEmailTemplate({
