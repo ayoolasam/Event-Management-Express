@@ -56,7 +56,7 @@ exports.register = async (req, res, next) => {
   }
 
   const string = generateRandomString();
-  console.log(string);
+  
 
   const user = await User.create({
     name,

@@ -22,6 +22,7 @@ exports.createEvent = async (req, res, next) => {
     price,
     capacity,
     imageUrl,
+    category,
   } = req.body;
 
   if (

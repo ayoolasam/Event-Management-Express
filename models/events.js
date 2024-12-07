@@ -15,7 +15,7 @@ const eventSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-   
+
     location: {
       type: String,
       required: true,
@@ -61,7 +61,6 @@ const eventSchema = new mongoose.Schema(
     },
     imageUrl: {
       type: String,
-      required: true,
     },
 
     createdBy: {

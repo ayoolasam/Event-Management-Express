@@ -3,6 +3,7 @@ const app = express();
 const dotenv = require("dotenv");
 const user = require("./routes/userRoutes.js");
 const events = require("./routes/eventRoutes.js");
+const ticket = require("./routes/ticketRoutes.js")
 const uploadRoutes = require("./utils/cloudinary.js");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -26,6 +27,7 @@ app.use(
 
 app.use("/api/v1/users", user);
 app.use("/api/v1/events", events);
+app.use("/api/v1/tickets", ticket);
 app.use("/api/v1/upload", uploadRoutes);
 
 const PORT = process.env.PORT;
