@@ -14,7 +14,7 @@ exports.buyTicket = async (req, res, next) => {
     });
   }
 
-  if (isEvent.availableTickets < noOfTickets) {
+  if (isEvent.capacity < noOfTickets) {
     return res.status(400).json({ message: "Not enough tickets available." });
   }
 
@@ -28,22 +28,11 @@ exports.buyTicket = async (req, res, next) => {
 
   const ticketCodee = generateRandomString();
 
-  function randomNumber() {
-    return Math.floor(Math.random() * 100) + 1;
-  }
-
-  const seatNumber = randomNumber();
-
-  const isSeatTaken = await Ticket.findOne({
-    event: eventId,
-    seatNumber: seatNumber,
-  });
-
   const ticket = await Ticket.create({
     purchasedBy: req.user,
     ticketCode: ticketCodee,
     event: eventId,
-    seatNumber: seatNumber,
+
     noOfTickets: noOfTickets,
   });
 
@@ -59,7 +48,7 @@ exports.buyTicket = async (req, res, next) => {
 };
 
 exports.getTickets = async (req, res, next) => {
-  const tickets = await Ticket.find();
+  const tickets = await Ticket.find().populate("event").populate("purchasedBy");
 
   res.status(200).json({
     message: "Tickets Fetched Successfully",
@@ -71,7 +60,6 @@ exports.getTickets = async (req, res, next) => {
 };
 
 exports.getTicket = async (req, res, next) => {
-  
   const ticket = await Ticket.findById(req.params.id);
 
   if (!ticket) {
@@ -85,5 +73,31 @@ exports.getTicket = async (req, res, next) => {
     data: {
       ticket,
     },
+  });
+};
+
+exports.toggleTicket = async (req, res, next) => {
+  const ticket = await Ticket.findById(req.params.id);
+
+  if (!ticket) {
+    return res.status(404).json({
+      success: false,
+      message: "Ticket Not found",
+    });
+  }
+
+  if (ticket.isUsed) {
+    return res.status(400).json({
+      success: false,
+      message: "Ticket Used Already",
+    });
+  }
+
+  ticket.isUsed = true;
+  await ticket.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Ticket successfully toggled ",
   });
 };

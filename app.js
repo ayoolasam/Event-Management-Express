@@ -3,7 +3,8 @@ const app = express();
 const dotenv = require("dotenv");
 const user = require("./routes/userRoutes.js");
 const events = require("./routes/eventRoutes.js");
-const ticket = require("./routes/ticketRoutes.js")
+const ticket = require("./routes/ticketRoutes.js");
+const payment = require("./routes/paymentRoutes.js");
 const uploadRoutes = require("./utils/cloudinary.js");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -27,6 +28,7 @@ app.use(
 
 app.use("/api/v1/users", user);
 app.use("/api/v1/events", events);
+app.use("/payments", payment);
 app.use("/api/v1/tickets", ticket);
 app.use("/api/v1/upload", uploadRoutes);
 

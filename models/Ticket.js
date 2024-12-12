@@ -21,9 +21,7 @@ const ticketSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    seatNumber: {
-      type: Number,
-    },
+  
     noOfTickets: {
       type: Number,
       default: 1,
