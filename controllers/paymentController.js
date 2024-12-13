@@ -4,9 +4,8 @@ const Payment = require("../models/payment");
 
 exports.payment = async (req, res, next) => {
   try {
- 
     const { price } = req.body;
-    const response = await initializePayment(req.user.email, amount);
+    const response = await initializePayment(req.user.email, price);
 
     if (response) {
       const payment = await Payment.create({
@@ -55,5 +54,41 @@ exports.webHook = async (req, res, next) => {
     return res.status(200);
   } catch (e) {
     console.log(e);
+  }
+};
+
+exports.getTransactions = async (req, res, next) => {
+  try {
+    const transactions = await Payment.find().populate("paidBy");
+
+    res.status(200).json({
+      message: "Transactions Fetched Successfully",
+      data: {
+        transactions,
+      },
+    });
+  } catch (e) {
+    res.status(500).json({
+      message: e.message,
+    });
+  }
+};
+
+exports.fetchTransaction = async (req, res, next) => {
+  try {
+    const transaction = await Payment.findById(req.params.id).populate(
+      "paidBy"
+    );
+
+    res.status(200).json({
+      message: "Transaction Fetched Successfully",
+      data: {
+        transaction,
+      },
+    });
+  } catch (e) {
+    res.status(500).json({
+      message: e.message,
+    });
   }
 };
