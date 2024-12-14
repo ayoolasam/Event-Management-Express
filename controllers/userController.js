@@ -1,4 +1,6 @@
 const User = require("../models/user");
+const Ticket = require("../models/Ticket");
+const Event = require("../models/events");
 const sendToken = require("../utils/sendToken");
 const { createEmailTemplate } = require("../utils/emailTemplate");
 const sendEmail = require("../utils/sendEmail");
@@ -56,7 +58,6 @@ exports.register = async (req, res, next) => {
   }
 
   const string = generateRandomString();
-  
 
   const user = await User.create({
     name,
@@ -163,6 +164,27 @@ exports.getMe = async (req, res, next) => {
     res.status(500).json({
       message: "Error Deleting User",
       error: e,
+    });
+  }
+};
+
+exports.adminDashBoard = async (req, res, next) => {
+  try {
+    const events = await Event.find();
+    const users = await User.find();
+    const tickets = await Ticket.find();
+
+    res.status(200).json({
+      message: "Dashboadrd Data Successfully Fetched",
+      data: {
+        events,
+        users,
+        tickets,
+      },
+    });
+  } catch (e) {
+    res.status(500).json({
+      message: e.message,
     });
   }
 };

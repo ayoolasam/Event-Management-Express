@@ -37,13 +37,13 @@ const PaymentSchema = new Schema(
       type: Date,
       default: Date.now,
     },
-    currency:{
-      type:String
+    currency: {
+      type: String,
     },
-    
-    channel:{
-      type:String
-    }
+
+    channel: {
+      type: String,
+    },
   },
   {
     timestamps: true,

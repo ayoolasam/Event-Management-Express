@@ -4,7 +4,7 @@ const Payment = require("../models/payment");
 
 exports.payment = async (req, res, next) => {
   try {
-    const { price } = req.body;
+    const { price, eventId } = req.body;
     const response = await initializePayment(req.user.email, price);
 
     if (response) {
@@ -14,6 +14,7 @@ exports.payment = async (req, res, next) => {
         reference: response.data.reference,
         amount: price,
         status: "pending",
+        event: eventId,
       });
     }
 
