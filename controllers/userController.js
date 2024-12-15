@@ -1,11 +1,12 @@
 const User = require("../models/user");
 const Ticket = require("../models/Ticket");
 const Event = require("../models/events");
+const Payment = require("../models/payment");
 const sendToken = require("../utils/sendToken");
 const { createEmailTemplate } = require("../utils/emailTemplate");
 const sendEmail = require("../utils/sendEmail");
 const generateRandomString = require("../utils/uniqueId");
-const { generateKey } = require("crypto");
+const Cloudinary = require("../utils/cloudinary");
 
 //get users
 exports.getUsers = async (req, res, next) => {
@@ -180,6 +181,155 @@ exports.adminDashBoard = async (req, res, next) => {
         events,
         users,
         tickets,
+      },
+    });
+  } catch (e) {
+    res.status(500).json({
+      message: e.message,
+    });
+  }
+};
+
+exports.ticketBoughtByAUser = async (req, res, next) => {
+  try {
+    const userTickets = await Ticket.find({
+      purchasedBy: req.params.id,
+    })
+      .populate("purchasedBy")
+      .populate("event");
+
+    if (!userTickets) {
+      return res.status(404).json({
+        message: "User Does not Have Any Tickets Presently",
+      });
+    }
+
+    res.status(200).json({
+      message: "User Tickets Fetched Successfully",
+      data: {
+        userTickets,
+      },
+    });
+    res.status();
+  } catch (e) {
+    res.status(500).json({
+      message: e.message,
+    });
+  }
+};
+
+exports.userTransactions = async (req, res, next) => {
+  try {
+    const userTransactions = await Payment.find({
+      paidBy: req.params.id,
+    })
+      .populate("paidBy")
+      .populate("event");
+
+    if (!userTransactions) {
+      return res.status(404).json({
+        message: "User Does not Have Any Transactions Presently",
+      });
+    }
+
+    res.status(200).json({
+      message: "User Transactions Fetched Successfully",
+      data: {
+        userTransactions,
+      },
+    });
+  } catch (e) {
+    res.status(500).json({
+      message: e.message,
+    });
+  }
+};
+
+exports.uploadUserImage = async (req, res, next) => {
+  try {
+    const { imageUrl } = req.body;
+
+    const user = await User.findById(req.user.id);
+
+    user.imageUrl = imageUrl;
+
+    await user.save();
+
+    res.status(200).json({
+      message: "user Image successfully Updated",
+      data: {
+        user,
+      },
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      message: e.message,
+    });
+  }
+};
+
+exports.updateUserDetails = async (req, res, next) => {
+  try {
+    const newUserData = {
+      name: req.body.name,
+      email: req.body.email,
+    };
+
+    const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
+      new: true,
+    });
+
+    res.status(200).json({
+      message: "User Data Updated Successfully",
+      data: {
+        user,
+      },
+    });
+  } catch (e) {
+    res.status(500).json({
+      message: e.message,
+    });
+  }
+};
+
+exports.getMyTickets = async (req, res, next) => {
+  try {
+    const myTickets = await Ticket.find({ purchasedBy: req.user.id });
+
+    if (!myTickets) {
+      return res.status(404).json({
+        messsge: "No tickets for this user",
+      });
+    }
+
+    res.status(200).json({
+      message: "My tickets Fecthed Successfully",
+      data: {
+        myTickets,
+      },
+    });
+  } catch (e) {
+    res.status(500).json({
+      message: e.message,
+    });
+  }
+};
+
+exports.getMyTransactions = async (req, res, next) => {
+  try {
+    const myTransactions = await Payment.find({ paidBy: req.user.id });
+
+    if (!myTransactions) {
+      return res.status(404).json({
+        messsge: "No transactions for this user",
+      });
+    }
+
+    res.status(200).json({
+      message: "My transactions Fetched Successfully",
+      data: {
+        myTransactions,
       },
     });
   } catch (e) {

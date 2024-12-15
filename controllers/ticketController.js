@@ -1,10 +1,12 @@
 const Ticket = require("../models/Ticket");
 const Event = require("../models/events");
 const User = require("../models/user");
+const { initializePayment } = require("../utils/payment");
+
 const generateRandomString = require("../utils/uniqueId");
 
 exports.buyTicket = async (req, res, next) => {
-  const { noOfTickets, eventId } = req.body;
+  const { noOfTickets, eventId, price } = req.body;
 
   const isEvent = await Event.findById(eventId);
 
@@ -26,23 +28,27 @@ exports.buyTicket = async (req, res, next) => {
     });
   }
 
+  const paymentLink = await initializePayment(req.user.email, price);
+
   const ticketCodee = generateRandomString();
 
   const ticket = await Ticket.create({
     purchasedBy: req.user,
     ticketCode: ticketCodee,
     event: eventId,
-
+    isPaid: false,
     noOfTickets: noOfTickets,
+    reference: paymentLink.data.reference,
   });
 
   isEvent.capacity = isEvent.capacity - noOfTickets;
   await isEvent.save();
 
   res.status(200).json({
-    message: "Ticket Purchased Successfully",
+    message: "Ticket Booked Successfully Please Navigate to Payment",
     data: {
       ticket,
+      paymentLink,
     },
   });
 };
@@ -53,7 +59,7 @@ exports.getTickets = async (req, res, next) => {
   res.status(200).json({
     message: "Tickets Fetched Successfully",
     length: tickets.length,
-    
+
     data: {
       tickets,
     },

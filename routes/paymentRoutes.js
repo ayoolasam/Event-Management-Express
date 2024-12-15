@@ -1,6 +1,5 @@
 const express = require("express");
 const {
-  payment,
   webHook,
   getTransactions,
   fetchTransaction,
@@ -8,7 +7,7 @@ const {
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 const router = express.Router();
 
-router.post("/transaction", isAuthenticatedUser, payment);
+// router.post("/transaction", isAuthenticatedUser, payment);
 router.post("/paystack", webHook);
 router.get(
   "/transactions",

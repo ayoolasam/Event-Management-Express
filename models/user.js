@@ -18,13 +18,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: {
         values: ["active", "inactive"],
-       
       },
       default: "active",
     },
-    uniqueID:{
-      type:String,
-      required:true,
+    uniqueID: {
+      type: String,
+      required: true,
+    },
+    imageUrl: {
+      type: String,
     },
     password: {
       type: String,
@@ -53,7 +55,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.pre("save", async function () {
+userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();
   }

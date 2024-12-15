@@ -21,7 +21,15 @@ const ticketSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-  
+    isPaid: {
+      type: Boolean,
+      default: false,
+    },
+    reference: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     noOfTickets: {
       type: Number,
       default: 1,
