@@ -14,6 +14,8 @@ const {
   updateUserDetails,
   getMyTickets,
   getMyTransactions,
+  resetPassword,
+  forgotPassword
 } = require("../controllers/userController");
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 const router = express.Router();
@@ -57,6 +59,9 @@ router.get(
   authorizeRoles("Admin"),
   adminDashBoard
 );
+
+router.post("/password/forgot", forgotPassword);
+router.put("/password/reset/:token", resetPassword);
 router.get("/me", isAuthenticatedUser, getMe);
 
 module.exports = router;
