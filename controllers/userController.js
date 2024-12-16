@@ -128,12 +128,6 @@ exports.deleteUser = async (req, res, next) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
 
-    if (!user) {
-      return res.status(404).json({
-        message: "User Not Found",
-      });
-    }
-
     res.status(200).json({
       message: "User Deleted Successfully",
       success: true,
@@ -295,7 +289,9 @@ exports.updateUserDetails = async (req, res, next) => {
 
 exports.getMyTickets = async (req, res, next) => {
   try {
-    const myTickets = await Ticket.find({ purchasedBy: req.user.id });
+    const myTickets = await Ticket.find({ purchasedBy: req.user.id })
+      .populate("purchasedBy")
+      .populate("event");
 
     if (!myTickets) {
       return res.status(404).json({

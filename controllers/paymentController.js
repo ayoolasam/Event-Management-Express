@@ -3,8 +3,6 @@ const { initializePayment } = require("../utils/payment");
 const Payment = require("../models/payment");
 const Ticket = require("../models/Ticket");
 
-
-
 exports.webHook = async (req, res, next) => {
   try {
     //get the event that was sent to the webhook if it was successfully
@@ -15,7 +13,7 @@ exports.webHook = async (req, res, next) => {
       const reference = transactionData.reference;
 
       //find the ticket with that reference
-      const ticket = await Ticket.findOne({ reference : reference });
+      const ticket = await Ticket.findOne({ reference: reference });
 
       // Create the payment in the database
       const payment = await Payment.create({

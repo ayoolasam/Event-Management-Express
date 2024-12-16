@@ -3,7 +3,8 @@ const {
   buyTicket,
   getTickets,
   getTicket,
-  toggleTicket
+  toggleTicket,
+  deleteTicket
 } = require("../controllers/ticketController");
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 const router = express.Router();
@@ -15,6 +16,12 @@ router.get(
   isAuthenticatedUser,
   authorizeRoles("Admin"),
   getTicket
+);
+router.delete(
+  "/ticket/:id",
+  isAuthenticatedUser,
+  authorizeRoles("Admin"),
+  deleteTicket
 );
 router.put(
   "/ticket/toggle/:id",

@@ -13,7 +13,7 @@ const {
   uploadUserImage,
   updateUserDetails,
   getMyTickets,
-  getMyTransactions
+  getMyTransactions,
 } = require("../controllers/userController");
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 const router = express.Router();
@@ -23,6 +23,7 @@ router.post("/user/Avatar", isAuthenticatedUser, uploadUserImage);
 router.post("/user/Update", isAuthenticatedUser, updateUserDetails);
 router.get("/user/myTickets", isAuthenticatedUser, getMyTickets);
 router.get("/user/myTransactions", isAuthenticatedUser, getMyTransactions);
+
 router.get(
   "/tickets/user/:id",
   isAuthenticatedUser,
