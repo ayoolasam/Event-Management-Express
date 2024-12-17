@@ -399,3 +399,22 @@ exports.resetPassword = async (req, res, next) => {
 
   sendToken(user, 200, res);
 };
+
+exports.userDashboard = async (req, res, next) => {
+  try {
+    const payments = await Payment.find({ paidBy: req.user.id });
+    const tickets = await Ticket.find({ purchasedBy: req.user.id });
+
+    res.status(200).json({
+      message: "Dashboard Data Successfully Fetched",
+      data: {
+        payments,
+        tickets,
+      },
+    });
+  } catch (e) {
+    res.status(500).json({
+      message: e.message,
+    });
+  }
+};
