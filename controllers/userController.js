@@ -315,7 +315,9 @@ exports.getMyTickets = async (req, res, next) => {
 
 exports.getMyTransactions = async (req, res, next) => {
   try {
-    const myTransactions = await Payment.find({ paidBy: req.user.id });
+    const myTransactions = await Payment.find({ paidBy: req.user.id })
+      .populate("paidBy")
+      .populate("event");
 
     if (!myTransactions) {
       return res.status(404).json({
