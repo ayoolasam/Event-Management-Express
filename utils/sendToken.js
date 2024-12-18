@@ -1,4 +1,3 @@
-
 const sendToken = (user, statusCode, res, req) => {
   const token = user.generateToken();
 

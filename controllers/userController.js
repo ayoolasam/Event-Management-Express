@@ -60,6 +60,15 @@ exports.register = async (req, res, next) => {
     });
   }
 
+  const isUserInDataBase = await User.findOne({ email });
+
+  if (isUserInDataBase) {
+    return res.status(400).json({
+      message: "User already Exists",
+      success: false,
+    });
+  }
+
   const string = generateRandomString();
 
   const user = await User.create({
