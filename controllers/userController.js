@@ -97,8 +97,11 @@ exports.register = async (req, res, next) => {
     return res.status(200).json({
       message: `User Registered Successfully and email sent to ${user.email}`,
     });
-  } catch (err) {
-    console.log(err);
+  } catch (e) {
+    res.status(500).json({
+      message: "Error Deleting User",
+      error: e.message,
+    });
   }
 };
 
