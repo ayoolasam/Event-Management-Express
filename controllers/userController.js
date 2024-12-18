@@ -3,6 +3,8 @@ const Ticket = require("../models/Ticket");
 const Event = require("../models/events");
 const Payment = require("../models/payment");
 const sendToken = require("../utils/sendToken");
+const errorHandler = require("../utils/errorHandler");
+const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const { createEmailTemplate } = require("../utils/emailTemplate");
 const sendEmail = require("../utils/sendEmail");
 const generateRandomString = require("../utils/uniqueId");
@@ -10,7 +12,7 @@ const Cloudinary = require("../utils/cloudinary");
 const crypto = require("crypto");
 
 //get users
-exports.getUsers = async (req, res, next) => {
+exports.getUsers = catchAsyncErrors(async (req, res, next) => {
   const users = await User.find();
 
   res.status(200).json({
@@ -20,10 +22,10 @@ exports.getUsers = async (req, res, next) => {
     },
     message: "All users in the Database",
   });
-};
+});
 
 //login
-exports.login = async (req, res, next) => {
+exports.login = catchAsyncErrors(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
     res.status(401).json({
@@ -48,10 +50,10 @@ exports.login = async (req, res, next) => {
   }
 
   sendToken(user, 200, res);
-};
+});
 
 //register
-exports.register = async (req, res, next) => {
+exports.register = catchAsyncErrors(async (req, res, next) => {
   const { name, password, username, email } = req.body;
 
   if (!name || !password || !username || !email) {
@@ -94,19 +96,19 @@ exports.register = async (req, res, next) => {
       message,
     });
 
-    return res.status(200).json({
+    res.status(201).json({
       message: `User Registered Successfully and email sent to ${user.email}`,
     });
   } catch (e) {
     res.status(500).json({
-      message: "Error Deleting User",
+      message: "Server Error",
       error: e.message,
     });
   }
-};
+});
 
 //logOut user
-exports.logOutUser = async (req, res, next) => {
+exports.logOutUser = catchAsyncErrors(async (req, res, next) => {
   res.cookie("token", "none", {
     expires: new Date(Date.now()),
     httpOnly: true,
@@ -118,10 +120,10 @@ exports.logOutUser = async (req, res, next) => {
     message: "Logged Out Successfully",
     sucess: true,
   });
-};
+});
 
 //fetch User
-exports.fetchUser = async (req, res, next) => {
+exports.fetchUser = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.params.id);
 
   if (!user) {
@@ -136,9 +138,9 @@ exports.fetchUser = async (req, res, next) => {
       user,
     },
   });
-};
+});
 
-exports.deleteUser = async (req, res, next) => {
+exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
 
@@ -152,9 +154,9 @@ exports.deleteUser = async (req, res, next) => {
       error: e.message,
     });
   }
-};
+});
 
-exports.getMe = async (req, res, next) => {
+exports.getMe = catchAsyncErrors(async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -175,9 +177,9 @@ exports.getMe = async (req, res, next) => {
       error: e,
     });
   }
-};
+});
 
-exports.adminDashBoard = async (req, res, next) => {
+exports.adminDashBoard = catchAsyncErrors(async (req, res, next) => {
   try {
     const events = await Event.find();
     const users = await User.find();
@@ -196,9 +198,8 @@ exports.adminDashBoard = async (req, res, next) => {
       message: e.message,
     });
   }
-};
-
-exports.ticketBoughtByAUser = async (req, res, next) => {
+});
+exports.ticketBoughtByAUser = catchAsyncErrors(async (req, res, next) => {
   try {
     const userTickets = await Ticket.find({
       purchasedBy: req.params.id,
@@ -224,9 +225,9 @@ exports.ticketBoughtByAUser = async (req, res, next) => {
       message: e.message,
     });
   }
-};
+});
 
-exports.userTransactions = async (req, res, next) => {
+exports.userTransactions = catchAsyncErrors(async (req, res, next) => {
   try {
     const userTransactions = await Payment.find({
       paidBy: req.params.id,
@@ -251,9 +252,9 @@ exports.userTransactions = async (req, res, next) => {
       message: e.message,
     });
   }
-};
+});
 
-exports.uploadUserImage = async (req, res, next) => {
+exports.uploadUserImage = catchAsyncErrors(async (req, res, next) => {
   try {
     const { imageUrl } = req.body;
 
@@ -275,9 +276,9 @@ exports.uploadUserImage = async (req, res, next) => {
       message: e.message,
     });
   }
-};
+});
 
-exports.updateUserDetails = async (req, res, next) => {
+exports.updateUserDetails = catchAsyncErrors(async (req, res, next) => {
   try {
     const newUserData = {
       name: req.body.name,
@@ -299,9 +300,9 @@ exports.updateUserDetails = async (req, res, next) => {
       message: e.message,
     });
   }
-};
+});
 
-exports.getMyTickets = async (req, res, next) => {
+exports.getMyTickets = catchAsyncErrors(async (req, res, next) => {
   try {
     const myTickets = await Ticket.find({ purchasedBy: req.user.id })
       .populate("purchasedBy")
@@ -324,9 +325,9 @@ exports.getMyTickets = async (req, res, next) => {
       message: e.message,
     });
   }
-};
+});
 
-exports.getMyTransactions = async (req, res, next) => {
+exports.getMyTransactions = catchAsyncErrors(async (req, res, next) => {
   try {
     const myTransactions = await Payment.find({ paidBy: req.user.id })
       .populate("paidBy")
@@ -349,9 +350,9 @@ exports.getMyTransactions = async (req, res, next) => {
       message: e.message,
     });
   }
-};
+});
 
-exports.forgotPassword = async (req, res, next) => {
+exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
 
   if (!user) {
@@ -386,9 +387,9 @@ exports.forgotPassword = async (req, res, next) => {
   } catch (err) {
     console.log(err);
   }
-};
+});
 
-exports.resetPassword = async (req, res, next) => {
+exports.resetPassword = catchAsyncErrors(async (req, res, next) => {
   //get token from url
   //hash url token
 
@@ -413,9 +414,9 @@ exports.resetPassword = async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   sendToken(user, 200, res);
-};
+});
 
-exports.userDashboard = async (req, res, next) => {
+exports.userDashboard = catchAsyncErrors(async (req, res, next) => {
   try {
     const payments = await Payment.find({ paidBy: req.user.id });
     const tickets = await Ticket.find({ purchasedBy: req.user.id });
@@ -432,4 +433,4 @@ exports.userDashboard = async (req, res, next) => {
       message: e.message,
     });
   }
-};
+});

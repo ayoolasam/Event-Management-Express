@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
+const errorMiddleware = require("./middlewares/errors.js");
 const user = require("./routes/userRoutes.js");
 const events = require("./routes/eventRoutes.js");
 const ticket = require("./routes/ticketRoutes.js");
@@ -32,6 +33,7 @@ app.use("/payments", payment);
 app.use("/api/v1/tickets", ticket);
 app.use("/api/v1/upload", uploadRoutes);
 
+app.use(errorMiddleware);
 const PORT = process.env.PORT;
 const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
