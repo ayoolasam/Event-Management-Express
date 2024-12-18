@@ -1,5 +1,6 @@
 const express = require("express");
 const { initializePayment } = require("../utils/payment");
+const catchAsyncErrors = require("../middlewares/catchAsyncErrors")
 const Payment = require("../models/payment");
 const Ticket = require("../models/Ticket");
 
@@ -39,7 +40,7 @@ exports.webHook = async (req, res, next) => {
     // Return a 200 to acknowledge receipt of the webhook
     return res.status(200);
   } catch (e) {
-    console.log(e);
+    next(e)
   }
 };
 
@@ -56,9 +57,7 @@ exports.getTransactions = async (req, res, next) => {
       },
     });
   } catch (e) {
-    res.status(500).json({
-      message: e.message,
-    });
+ next(e)
   }
 };
 
@@ -75,8 +74,6 @@ exports.fetchTransaction = async (req, res, next) => {
       },
     });
   } catch (e) {
-    res.status(500).json({
-      message: e.message,
-    });
+   next(e)
   }
 };
