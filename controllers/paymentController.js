@@ -39,8 +39,8 @@ exports.webHook = async (req, res, next) => {
 
     // Return a 200 to acknowledge receipt of the webhook
     return res.status(200);
-  } catch (e) {
-    next(e)
+  } catch (err) {
+    next(err)
   }
 };
 
@@ -56,8 +56,8 @@ exports.getTransactions = async (req, res, next) => {
         transactions,
       },
     });
-  } catch (e) {
- next(e)
+  } catch (err) {
+ next(err)
   }
 };
 
@@ -73,7 +73,7 @@ exports.fetchTransaction = async (req, res, next) => {
         transaction,
       },
     });
-  } catch (e) {
-   next(e)
+  } catch (err) {
+   next(err)
   }
 };
