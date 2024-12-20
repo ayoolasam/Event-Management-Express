@@ -1,6 +1,6 @@
 const express = require("express");
 const { initializePayment } = require("../utils/payment");
-const catchAsyncErrors = require("../middlewares/catchAsyncErrors")
+const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const Payment = require("../models/payment");
 const Ticket = require("../models/Ticket");
 
@@ -40,7 +40,7 @@ exports.webHook = async (req, res, next) => {
     // Return a 200 to acknowledge receipt of the webhook
     return res.status(200);
   } catch (err) {
-    next(err)
+    next(err);
   }
 };
 
@@ -57,7 +57,7 @@ exports.getTransactions = async (req, res, next) => {
       },
     });
   } catch (err) {
- next(err)
+    next(err);
   }
 };
 
@@ -74,6 +74,21 @@ exports.fetchTransaction = async (req, res, next) => {
       },
     });
   } catch (err) {
-   next(err)
+    next(err);
   }
 };
+
+exports.totalAmount = catchAsyncErrors(async (req, res, next) => {
+  const result = await Payment.aggregate([
+    { $match: { status: "success" } }, //filter the documents with status success into one group for aggregration
+    { $group: { _id: null, totalMoney: { $sum: "$amount" } } },
+  ]);
+
+  const totalMoney = result[0]?.totalMoney || 0; // Handle case where no transactions
+
+  res.status(200).json({
+    data: {
+      totalMoney,
+    },
+  });
+});

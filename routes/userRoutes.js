@@ -33,6 +33,7 @@ router.get(
   authorizeRoles("Admin"),
   ticketBoughtByAUser
 );
+
 router.get(
   "/transactions/user/:id",
   isAuthenticatedUser,

@@ -109,25 +109,17 @@ exports.toggleTicket = async (req, res, next) => {
   });
 };
 
-
 exports.deleteTicket = async (req, res, next) => {
-  try{
-    
+  try {
     const ticket = await Ticket.findByIdAndDelete(req.params.id);
-
-
- 
-
- 
 
     res.status(200).json({
       success: true,
       message: "Ticket successfully deleted ",
     });
-  }catch(e){
+  } catch (e) {
     res.status(500).json({
-      message:e.message
-    })
+      message: e.message,
+    });
   }
-  
 };
