@@ -184,6 +184,12 @@ exports.adminDashBoard = catchAsyncErrors(async (req, res, next) => {
     const events = await Event.find();
     const users = await User.find();
     const tickets = await Ticket.find();
+    const result = await Payment.aggregate([
+      { $match: { status: "success" } }, //filter the documents with status success into one group for aggregration
+      { $group: { _id: null, totalMoney: { $sum: "$amount" } } },
+    ]);
+
+    const totalMoney = result[0]?.totalMoney || 0; // Handle case where no transactions
 
     res.status(200).json({
       message: "Dashboadrd Data Successfully Fetched",
@@ -191,6 +197,7 @@ exports.adminDashBoard = catchAsyncErrors(async (req, res, next) => {
         events,
         users,
         tickets,
+        totalMoney,
       },
     });
   } catch (e) {
@@ -433,4 +440,19 @@ exports.userDashboard = catchAsyncErrors(async (req, res, next) => {
       message: e.message,
     });
   }
+});
+
+exports.totalAmount = catchAsyncErrors(async (req, res, next) => {
+  const result = await Payment.aggregate([
+    { $match: { status: "success" } }, //filter the documents with status success into one group for aggregration
+    { $group: { _id: null, totalMoney: { $sum: "$amount" } } },
+  ]);
+
+  const totalMoney = result[0]?.totalMoney || 0; // Handle case where no transactions
+
+  res.status(200).json({
+    data: {
+      totalMoney,
+    },
+  });
 });

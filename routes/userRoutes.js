@@ -17,6 +17,7 @@ const {
   resetPassword,
   forgotPassword,
   userDashboard,
+  totalAmount,
 } = require("../controllers/userController");
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 const router = express.Router();
@@ -40,6 +41,14 @@ router.get(
   authorizeRoles("Admin"),
   userTransactions
 );
+
+router.get(
+  "/transactions/totalAmount",
+  isAuthenticatedUser,
+  authorizeRoles("Admin"),
+  totalAmount
+);
+
 router.post("/register", register);
 router.post("/Login", login);
 router.get("/LogOut", isAuthenticatedUser, logOutUser);

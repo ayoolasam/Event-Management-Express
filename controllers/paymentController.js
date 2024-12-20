@@ -77,18 +77,3 @@ exports.fetchTransaction = async (req, res, next) => {
     next(err);
   }
 };
-
-exports.totalAmount = catchAsyncErrors(async (req, res, next) => {
-  const result = await Payment.aggregate([
-    { $match: { status: "success" } }, //filter the documents with status success into one group for aggregration
-    { $group: { _id: null, totalMoney: { $sum: "$amount" } } },
-  ]);
-
-  const totalMoney = result[0]?.totalMoney || 0; // Handle case where no transactions
-
-  res.status(200).json({
-    data: {
-      totalMoney,
-    },
-  });
-});
