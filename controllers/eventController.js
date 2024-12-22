@@ -1,7 +1,14 @@
 const Event = require("../models/events");
+const APIFilters = require("../utils/apiFilters");
 
 exports.getEvents = async (req, res, next) => {
-  const events = await Event.find();
+  const apiFilters = new APIFilters(Event.find(), req.query)
+    .filter()
+    .sort()
+    .searchByQuery()
+    .limitFields()
+    .pagination();
+  const events = await apiFilters.query;
 
   res.status(200).json({
     message: "Events Fetched Successfully",
