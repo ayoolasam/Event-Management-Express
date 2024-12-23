@@ -18,6 +18,7 @@ const {
   forgotPassword,
   userDashboard,
   totalAmount,
+  deactivateUser,
 } = require("../controllers/userController");
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 const router = express.Router();
@@ -70,6 +71,14 @@ router.get(
   authorizeRoles("Admin"),
   adminDashBoard
 );
+
+router.put(
+  "/admin/deactivateUser/:id",
+  isAuthenticatedUser,
+  authorizeRoles("Admin"),
+  deactivateUser
+);
+
 router.get("/userdashBoard", isAuthenticatedUser, userDashboard);
 
 router.post("/password/forgot", forgotPassword);

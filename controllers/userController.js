@@ -41,6 +41,15 @@ exports.login = catchAsyncErrors(async (req, res, next) => {
     });
   }
 
+  if (user.status === "inactive") {
+    return next(
+      new errorHandler(
+        "User Already Deactivated Cant Login ,Contact Admin",
+        400
+      )
+    );
+  }
+
   const isPasswordValid = await user.comparePassword(password);
 
   if (!isPasswordValid) {
@@ -454,5 +463,20 @@ exports.totalAmount = catchAsyncErrors(async (req, res, next) => {
     data: {
       totalMoney,
     },
+  });
+});
+
+exports.deactivateUser = catchAsyncErrors(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(new errorHandler("user Not Found", 404));
+  }
+
+  user.status = "inactive";
+
+  await user.save();
+
+  res.status(200).json({
+    message: "User successfully Deactivated",
   });
 });
