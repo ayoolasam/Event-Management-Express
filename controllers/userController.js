@@ -44,7 +44,7 @@ exports.login = catchAsyncErrors(async (req, res, next) => {
   if (user.status === "inactive") {
     return next(
       new errorHandler(
-        "User Already Deactivated Cant Login ,Contact Admin",
+        "User Already Deactivated Cant Login Contact Admin or Support",
         400
       )
     );
