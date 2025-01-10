@@ -46,6 +46,8 @@ const ticketSchema = new mongoose.Schema(
   }
 );
 
+ticketSchema.index({ ticketCode: "text", reference: "text" });
+
 const Ticket = mongoose.model("Ticket", ticketSchema);
 
 module.exports = Ticket;

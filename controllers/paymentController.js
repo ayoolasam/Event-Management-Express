@@ -3,6 +3,7 @@ const { initializePayment } = require("../utils/payment");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const Payment = require("../models/payment");
 const Ticket = require("../models/Ticket");
+const APIfilters = require("../utils/apiFilters");
 
 exports.webHook = async (req, res, next) => {
   try {
@@ -46,12 +47,19 @@ exports.webHook = async (req, res, next) => {
 
 exports.getTransactions = async (req, res, next) => {
   try {
-    const transactions = await Payment.find()
+    const apiFilters = new APIfilters(Payment.find(), req.query)
+      .filter()
+      .sort()
+      .searchByQuery()
+      .limitFields()
+      .pagination();
+    const transactions = await apiFilters.query
       .populate("paidBy")
       .populate("event");
 
     res.status(200).json({
       message: "Transactions Fetched Successfully",
+      length: transactions.length,
       data: {
         transactions,
       },

@@ -1,6 +1,7 @@
 const Ticket = require("../models/Ticket");
 const Event = require("../models/events");
 const User = require("../models/user");
+const APIFilters = require("../utils/apiFilters");
 const { initializePayment } = require("../utils/payment");
 
 const generateRandomString = require("../utils/uniqueId");
@@ -54,7 +55,16 @@ exports.buyTicket = async (req, res, next) => {
 };
 
 exports.getTickets = async (req, res, next) => {
-  const tickets = await Ticket.find().populate("event").populate("purchasedBy");
+  const apiFilters = new APIFilters(Ticket.find(), req.query)
+    .filter()
+    .sort()
+    .searchByQuery()
+    .limitFields()
+    .pagination();
+
+  const tickets = await apiFilters.query
+    .populate("event")
+    .populate("purchasedBy");
 
   res.status(200).json({
     message: "Tickets Fetched Successfully",
